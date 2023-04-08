@@ -1,0 +1,316 @@
+Завдання 1 - ArrayList
+
+public class MyArrayList {
+
+    private Object[] data;
+    private int size;
+
+    public MyArrayList() {
+        this.data = new Object[10];
+        this.size = 0;
+    }
+
+    public void add(Object value) {
+        if (size == data.length) {
+            resize();
+        }
+        data[size++] = value;
+    }
+
+    public Object remove(int index) {
+        Object removedValue = data[index];
+        System.arraycopy(data, index + 1, data, index, size - index - 1);
+        data[--size] = null;
+        return removedValue;
+    }
+
+    public void clear() {
+        Arrays.fill(data, null);
+        size = 0;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public Object get(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index out of range: " + index);
+        }
+        return data[index];
+    }
+
+    private void resize() {
+        Object[] newData = new Object[data.length * 2];
+        System.arraycopy(data, 0, newData, 0, data.length);
+        data = newData;
+    }
+
+}
+
+Завдання 2 - LinkedList
+
+public class MyLinkedList {
+    private Node head;
+    private Node tail;
+    private int size;
+
+    private class Node {
+        Object value;
+        Node prev;
+        Node next;
+
+        public Node(Object value, Node prev, Node next) {
+            this.value = value;
+            this.prev = prev;
+            this.next = next;
+        }
+    }
+
+    public void add(Object value) {
+        Node newNode = new Node(value, tail, null);
+        if (tail != null) {
+            tail.next = newNode;
+        }
+        tail = newNode;
+        if (head == null) {
+            head = newNode;
+        }
+        size++;
+    }
+
+    public void remove(int index) {
+        Node currentNode = getNode(index);
+        Node prevNode = currentNode.prev;
+        Node nextNode = currentNode.next;
+        if (prevNode == null) {
+            head = nextNode;
+        } else {
+            prevNode.next = nextNode;
+            currentNode.prev = null;
+        }
+        if (nextNode == null) {
+            tail = prevNode;
+        } else {
+            nextNode.prev = prevNode;
+            currentNode.next = null;
+        }
+        currentNode.value = null;
+        size--;
+    }
+
+    public void clear() {
+        Node currentNode = head;
+        while (currentNode != null) {
+            Node nextNode = currentNode.next;
+            currentNode.prev = null;
+            currentNode.next = null;
+            currentNode.value = null;
+            currentNode = nextNode;
+        }
+        head = null;
+        tail = null;
+        size = 0;
+    }
+
+    public int size() {
+        return size;
+    }
+
+    public Object get(int index) {
+        return getNode(index).value;
+    }
+
+    private Node getNode(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+        Node currentNode = head;
+        for (int i = 0; i < index; i++) {
+            currentNode = currentNode.next;
+        }
+        return currentNode;
+    }
+}
+
+Завдання 3 - Queue (використав клас Node)
+
+public class MyQueueNode<T> implements MyQueue<T> {
+    private Node<T> head;
+    private Node<T> tail;
+    private int size;
+
+    public MyQueueNode() {
+        head = null;
+        tail = null;
+        size = 0;
+    }
+
+    public void add
+    
+    Завдання 4 - Stack
+    
+    public class MyStack {
+    private Object[] stack;
+    private int top;
+
+    public MyStack() {
+        stack = new Object[10]; 
+        top = -1;
+    }
+
+    public void push(Object value) {
+        if (top == stack.length - 1) {
+           
+            Object[] newStack = new Object[stack.length * 2];
+            System.arraycopy(stack, 0, newStack, 0, stack.length);
+            stack = newStack;
+        }
+        top++;
+        stack[top] = value;
+    }
+
+    public void remove(int index) {
+        if (index < 0 || index > top) {
+            throw new IndexOutOfBoundsException("Неправильний індекс: " + index);
+        }
+        System.arraycopy(stack, index + 1, stack, index, top - index);
+        stack[top] = null; 
+        top--;
+    }
+
+    public void clear() {
+        for (int i = 0; i <= top; i++) {
+            stack[i] = null;
+        }
+        top = -1;
+    }
+
+    public int size() {
+        return top + 1;
+    }
+
+    public Object peek() {
+        if (top == -1) {
+            throw new EmptyStackException();
+        }
+        return stack[top];
+    }
+
+    public Object pop() {
+        Object value = peek();
+        stack[top] = null;
+        top--;
+        return value;
+    }
+}
+
+Завдання 5 - HashMap
+
+public class MyHashMap {
+    private Node[] buckets;
+    private int size;
+    
+    public MyHashMap(int capacity) {
+        buckets = new Node[capacity];
+        size = 0;
+    }
+    
+    public void put(Object key, Object value) {
+        int hashCode = key.hashCode();
+        int index = hashCode % buckets.length;
+        
+        Node existingNode = findNodeInBucket(buckets[index], key);
+        if (existingNode != null) {
+            existingNode.setValue(value);
+        } else {
+            Node newNode = new Node(key, value);
+            newNode.setNext(buckets[index]);
+            buckets[index] = newNode;
+            size++;
+        }
+    }
+    
+    public Object get(Object key) {
+        int hashCode = key.hashCode();
+        int index = hashCode % buckets.length;
+        
+        Node node = findNodeInBucket(buckets[index], key);
+        return node != null ? node.getValue() : null;
+    }
+    
+    public void remove(Object key) {
+        int hashCode = key.hashCode();
+        int index = hashCode % buckets.length;
+        
+        Node previous = null;
+        Node current = buckets[index];
+        
+        while (current != null) {
+            if (current.getKey().equals(key)) {
+                if (previous == null) {
+                    buckets[index] = current.getNext();
+                } else {
+                    previous.setNext(current.getNext());
+                }
+                size--;
+                return;
+            }
+            previous = current;
+            current = current.getNext();
+        }
+    }
+    
+    public void clear() {
+        for (int i = 0; i < buckets.length; i++) {
+            buckets[i] = null;
+        }
+        size = 0;
+    }
+    
+    public int size() {
+        return size;
+    }
+    
+    private Node findNodeInBucket(Node node, Object key) {
+        while (node != null) {
+            if (node.getKey().equals(key)) {
+                return node;
+            }
+            node = node.getNext();
+        }
+        return null;
+    }
+    
+    private static class Node {
+        private Object key;
+        private Object value;
+        private Node next;
+        
+        public Node(Object key, Object value) {
+            this.key = key;
+            this.value = value;
+            this.next = null;
+        }
+        
+        public Object getKey() {
+            return key;
+        }
+        
+        public Object getValue() {
+            return value;
+        }
+        
+        public void setValue(Object value) {
+            this.value = value;
+        }
+        
+        public Node getNext() {
+            return next;
+        }
+        
+        public void setNext(Node next) {
+            this.next = next;
+        }
+    }
+}
