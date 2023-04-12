@@ -1,7 +1,7 @@
-import java.util.ArrayList;
-import java.util.List;
 
-public class MyQueue<T> {
+
+
+    class MyQueue<T> {
     private List<T> queue = new ArrayList<>();
 
     public MyQueue() {
